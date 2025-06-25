@@ -1,12 +1,12 @@
 name: Terraform CI/CD
 
 on:
-  pull_request:
-    branches:
-      - main
+  # pull_request:
+  #   branches:
+  #     - main
   push:
     branches:
-      - main
+      - infra
 
 jobs:
   terraform:
@@ -41,5 +41,5 @@ jobs:
       run: terraform plan -no-color
 
     - name: Terraform Apply
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/infra'
       run: terraform apply -auto-approve
