@@ -1,9 +1,9 @@
 name: Terraform CI/CD
 
 on:
-  # pull_request:
-  #   branches:
-  #     - main
+  pull_request:
+    branches:
+      - infra
   push:
     branches:
       - infra
@@ -37,9 +37,16 @@ jobs:
       run: terraform validate
 
     - name: Terraform Plan
-      # if: github.event_name == 'push'
-      run: terraform plan -no-color
+      if: github.event_name == 'push' || github.event_name == 'pull_request' 
+      run: terraform plan -no-color > plan.txt || true
 
+    - name: Upload Terraform Plan Artifact
+      if: github.event_name == 'pull_request' 
+      uses: actions/upload-artifact@v4
+      with: 
+        name: terraform-plan
+        path: plan.txt
+      
     - name: Terraform Apply
       if: github.event_name == 'push' && github.ref == 'refs/heads/infra'
       run: terraform apply -auto-approve
